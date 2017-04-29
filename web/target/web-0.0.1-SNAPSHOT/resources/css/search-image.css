@@ -1,0 +1,15 @@
+.index-card {
+    width: 98%;
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+.vietnamese-name {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+.science-name {
+    font-size: 10pt;
+}

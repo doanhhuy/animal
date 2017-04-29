@@ -1,0 +1,31 @@
+.index-card {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+.science-name {
+    font-size: 12pt;
+}
+
+.p-title {
+    color: #1CA347;
+    font-size: medium;
+    font-weight: bolder;
+}
+
+p-category {
+    color: #3a3a3a;
+    font-size: smaller;
+}
+
+.td-content {
+    margin-bottom: 10px;
+    border: 1px solid #666;
+    box-shadow: 5px 5px 5px #666;
+    -moz-box-shadow: 5px 5px 5px #666;
+    -webkit-box-shadow: 5px 5px 5px #666;
+    margin-right: 5px;
+    padding: 10px;
+}
+

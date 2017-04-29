@@ -1,0 +1,32 @@
+<head>
+    <title>Biodiversity</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- Font-->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- jquery-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+    <!-- Bootstrap core CSS     -->
+    <link href="<c:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet"/>
+
+    <!-- Animation library for notifications   -->
+    <link href="<c:url value="/resources/css/animate.min.css"/>" rel="stylesheet"/>
+
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="<c:url value="/resources/css/light-bootstrap-dashboard.css"/>" rel="stylesheet"/>
+
+
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link href="<c:url value="/resources/css/demo.css"/>" rel="stylesheet"/>
+
+    <%--indicator--%>
+
+    <!--     Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+    <link href="<c:url value="/resources/css/pe-icon-7-stroke.css"/>" rel="stylesheet"/>
+    <link href="<c:url value="/resources/css/w3.css"/>" rel="stylesheet"/>
+    <link rel="stylesheet" href="<c:url value="/resources/css/formValidation.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/css/formValidation.min.css"/>">
+</head>

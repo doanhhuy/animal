@@ -1,0 +1,32 @@
+.p-title {
+    color: #1CA347;
+    font-size: medium;
+    font-weight: bolder;
+}
+
+p-category {
+    color: #3a3a3a;
+    font-size: small;
+}
+
+.td-content {
+    margin-bottom: 10px;
+    border: 1px solid #666;
+    box-shadow: 5px 5px 5px #666;
+    -moz-box-shadow: 5px 5px 5px #666;
+    -webkit-box-shadow: 5px 5px 5px #666;
+    margin-right: 5px;
+    padding: 10px;
+}
+
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+    width: 100%;
+    margin: auto;
+}
+
+.h4-title {
+    color: #000;
+    font-size: xx-large;
+    font-weight: bolder;
+}

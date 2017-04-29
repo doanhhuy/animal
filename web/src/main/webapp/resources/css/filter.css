@@ -1,0 +1,27 @@
+#exTab3 .nav-pills > li > a {
+    border-radius: 4px 4px 0 0;
+}
+
+#exTab3 .tab-content {
+    padding: 5px 15px;
+}
+
+#content {
+    border: 1px solid #eaeae1;
+}
+
+.index-card {
+    width: 98%;
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+.vietnamese-name {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+.science-name {
+    font-size: 10pt;
+}

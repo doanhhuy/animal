@@ -1,0 +1,114 @@
+#login-dp {
+    min-width: 250px;
+    padding: 14px 14px 0;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, .8);
+}
+
+#login-dp .help-block {
+    font-size: 12px
+}
+
+#login-dp .bottom {
+    background-color: rgba(255, 255, 255, .8);
+    border-top: 1px solid #ddd;
+    clear: both;
+    padding: 14px;
+}
+
+#login-dp .social-buttons {
+    margin: 12px 0
+}
+
+#login-dp .social-buttons a {
+    width: 49%;
+}
+
+#login-dp .form-group {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    #login-dp {
+        background-color: #fff;
+        color: #000000;
+    }
+
+    #login-dp .bottom {
+        background-color: #fff;
+        border-top: 0 none;
+    }
+}
+
+.scrollToTop {
+    border: medium none;
+    bottom: 10px;
+    cursor: pointer;
+    display: none;
+    height: 50px;
+    outline: medium none;
+    padding: 0;
+    position: fixed;
+    right: 20px;
+    width: 50px;
+    z-index: 9999;
+}
+
+.scrollToTop:hover {
+    text-decoration: none;
+}
+
+input[type=text] {
+    width: 50px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+    background-color: white;
+    background-image: url('/resources/img/iconsearch.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+    z-index: 100;
+    position: fixed;
+    right: 45px;
+}
+
+input[type=text]:focus {
+    width: 20%;
+}
+
+.my-img {
+    width: 100%;
+}
+
+.vietnamese-name {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 5px;
+}
+
+.science-name {
+    font-size: 10pt;
+}
+
+#myBtn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    bottom: 20px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: red; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+}
+
+#myBtn:hover {
+    background-color: #555; /* Add a dark-grey background on hover */
+}
