@@ -226,7 +226,7 @@
             }
         }).addTo(group);
     }
-    L.marker([16.455433, 107.592504], {icon: yellowIcon}).addTo(map);
+//    L.marker([16.455433, 107.592504], {icon: yellowIcon}).addTo(map);
 
 </script>
 <c:if test="${error != null}">

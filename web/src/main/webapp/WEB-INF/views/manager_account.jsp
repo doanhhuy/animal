@@ -44,7 +44,9 @@
                                         <div class="col-md-12">
                                             <div class="card">
                                                 <div class="header">
-                                                    <button type="button" class="btn btn-primary" onclick='createAccount();'>Tạo tài khoản</button>
+                                                    <button type="button" class="btn btn-primary"
+                                                            onclick='createAccount();'>Tạo tài khoản
+                                                    </button>
                                                     <h4 class="title">Danh Sách Tài Khoản</h4>
                                                 </div>
                                                 <div class="content">
@@ -67,8 +69,10 @@
                                                                 <td>${temp.roleName}</td>
                                                                 <td>${temp.phonenumber}</td>
                                                                 <td>${temp.email}</td>
-                                                                <td><a href="#"
-                                                                       onclick='updateAccount(${temp.id});'>Sửa</a></td>
+                                                                <td><a href="<c:url value ="userprofiles/${temp.id}"/>" >
+                                                                    Sửa
+                                                                </a>
+                                                                </td>
                                                             </tr>
                                                         </c:forEach>
                                                         </tbody>
@@ -150,9 +154,6 @@
 
     function createAccount() {
         $('#myModal').modal('show');
-    }
-    function updateAccount(accountId){
-        window.location.href('/account/' + accountId);
     }
 </script>
 </html>
