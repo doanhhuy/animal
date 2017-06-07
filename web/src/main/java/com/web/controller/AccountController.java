@@ -491,11 +491,179 @@ public class AccountController {
         } else {
             ModelAndView view = new ModelAndView("user_profile");
             view.addObject("accountAPI", accountAPI);
+            view.addObject("buttonLabel", "Cập nhật");
+            view.addObject("formAction", "updateaccount");
             return view;
         }
     }
+    @RequestMapping(value = "/userprofiles/{accountId}", method = RequestMethod.GET)
+    private ModelAndView showUserProfilesById(HttpServletRequest servletRequest,@PathVariable int accountId) {
+        HttpSession session = servletRequest.getSession();
+        AccountAPI accountAPI = (AccountAPI) session.getAttribute("accountAPI");
+        if (accountAPI == null || tokenInfo == null) {
+            ModelAndView view = new ModelAndView("index");
+            String message = "Bạn chưa đăng nhập!";
+            view.addObject("error", message);
+            return view;
+        } else {
 
-    @RequestMapping(value = "/updateaccount", method = RequestMethod.POST)
+            HttpClient httpClient = HttpClients.createDefault();
+            try {
+                URIBuilder builder = null;
+                builder = new URIBuilder(REST_SERVICE_URI + "api/accounts/" + accountId);
+                builder.setParameter("access_token", tokenInfo.getAccess_token());
+                URI uri = builder.build();
+                HttpGet request = new HttpGet(uri);
+                request.setHeader("content-type", "application/json");
+                HttpResponse response = httpClient.execute(request);
+                HttpEntity entity = response.getEntity();
+                AccountForm accountForm = new AccountForm();
+                if (entity != null) {
+                    String json = EntityUtils.toString(entity);
+                    JSONParser parser = new JSONParser();
+                    JSONObject object = (JSONObject) parser.parse(json);
+                    if (object.size() > 0) {
+                        if (object.containsKey("message")) {
+                            String error = (String) object.get("message");
+                            ModelAndView view = new ModelAndView("redirect:/userprofile");
+                            view.addObject("accountForm", accountForm);
+                            view.addObject("error", 1);
+                            return view;
+                        } else {
+                            DateCommon dateCommon = new DateCommon();
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject = (JSONObject) object.get("account");
+                            AccountAPI account = new AccountAPI();
+                            account.setIdMember((long) jsonObject.get("idMember"));
+                            account.setRoleName((String) jsonObject.get("roleName"));
+                            account.setIdRole((long) jsonObject.get("idRole"));
+                            account.setBirthday(dateCommon.convertStringToDateSql((String) jsonObject.get("birthday")));
+                            account.setPhonenumber((String) jsonObject.get("phonenumber"));
+                            account.setAddress((String) jsonObject.get("address"));
+                            account.setDetail((String) jsonObject.get("detail"));
+                            account.setEmail((String) jsonObject.get("email"));
+                            account.setFullName((String) jsonObject.get("fullName"));
+                            account.setPassword((String) jsonObject.get("password"));
+                            account.setId((long) jsonObject.get("id"));
+                            account.setUsername((String) jsonObject.get("username"));
+                            session.setAttribute("accountAPI", accountAPI);
+                            ModelAndView view = new ModelAndView("user_profile");
+                            view.addObject("accountAPI", account);
+                            view.addObject("buttonLabel", "Cập nhật");
+                            view.addObject("formAction", "updateUserprofiles/" +account.getId() );
+                            return view;
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    @RequestMapping(value = "/updateUserprofiles/{accountId}", method = RequestMethod.POST)
+    private ModelAndView updateUserProfilesById(HttpServletRequest servletRequest,@PathVariable int accountId,  @ModelAttribute("accountForm") AccountForm accountForm) {
+        HttpSession session = servletRequest.getSession();
+        AccountAPI accountAPI = (AccountAPI) session.getAttribute("accountAPI");
+        if (accountAPI == null || tokenInfo == null) {
+            ModelAndView view = new ModelAndView("index");
+            String message = "Bạn chưa đăng nhập!";
+            view.addObject("error", message);
+            return view;
+        } else {
+
+            HttpClient httpClient = HttpClients.createDefault();
+            try {
+                URIBuilder builder = null;
+                builder = new URIBuilder(REST_SERVICE_URI + "api/accounts/" + accountForm.getId());
+                builder.setParameter("access_token", tokenInfo.getAccess_token());
+                URI uri = builder.build();
+                HttpPut request = new HttpPut(uri);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("fullName", accountForm.getFullName());
+                String date = accountForm.getBirthday();
+                String[] splits = date.split("-");
+                jsonObject.put("date", splits[0]);
+                jsonObject.put("month", splits[1]);
+                jsonObject.put("year", splits[2]);
+                jsonObject.put("address", accountForm.getAddress());
+                jsonObject.put("detail", accountForm.getDetail());
+                jsonObject.put("phonenumber", accountForm.getPhonenumber());
+                jsonObject.put("email", accountForm.getEmail());
+                jsonObject.put("idRole", accountForm.getIdRole());
+                jsonObject.put("idMember", accountForm.getIdMember());
+                jsonObject.put("id", accountForm.getId());
+                StringEntity stringEntity = new StringEntity(jsonObject.toString(), "application/json", "UTF-8");
+                request.setHeader("content-type", "application/json");
+                request.setEntity(stringEntity);
+                HttpResponse response = httpClient.execute(request);
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    String json = EntityUtils.toString(entity);
+                    JSONParser parser = new JSONParser();
+                    JSONObject object = (JSONObject) parser.parse(json);
+                    if (object.size() > 0) {
+                        if (object.containsKey("message")) {
+                            String error = (String) object.get("message");
+                            ModelAndView view = new ModelAndView("redirect:/userprofile");
+                            view.addObject("accountForm", accountForm);
+                            view.addObject("error", 1);
+                            return view;
+                        } else {
+//                            DateCommon dateCommon = new DateCommon();
+//                            jsonObject = new JSONObject();
+//                            jsonObject = (JSONObject) object.get("account");
+//                            AccountAPI account = new AccountAPI();
+//                            account.setIdMember((long) jsonObject.get("idMember"));
+//                            account.setRoleName((String) jsonObject.get("roleName"));
+//                            account.setIdRole((long) jsonObject.get("idRole"));
+//                            account.setBirthday(dateCommon.convertStringToDateSql((String) jsonObject.get("birthday")));
+//                            account.setPhonenumber((String) jsonObject.get("phonenumber"));
+//                            account.setAddress((String) jsonObject.get("address"));
+//                            account.setDetail((String) jsonObject.get("detail"));
+//                            account.setEmail((String) jsonObject.get("email"));
+//                            account.setFullName((String) jsonObject.get("fullName"));
+//                            account.setPassword((String) jsonObject.get("password"));
+//                            account.setId((long) jsonObject.get("id"));
+//                            account.setUsername((String) jsonObject.get("username"));
+//                            session.setAttribute("accountAPI", accountAPI);
+//                            ModelAndView view = new ModelAndView("user_profile");
+//                            view.addObject("accountAPI", account);
+//                            view.addObject("buttonLabel", "Cập nhật");
+//                            view.addObject("formAction", "updateUserprofiles/" +account.getId() );
+//                            view.addObject("message", "Cập nhật thành công!");
+                            ModelAndView view = new ModelAndView("redirect:/manageraccount");
+                            return view;
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    @RequestMapping(value = "/updateaccount", method = RequestMethod.PUT)
     public ModelAndView updateAccount(HttpServletRequest httpServletRequest, @ModelAttribute("accountForm") AccountForm accountForm) {
         HttpSession session = httpServletRequest.getSession();
         AccountAPI accountAPI = (AccountAPI) session.getAttribute("accountAPI");
@@ -561,7 +729,9 @@ public class AccountController {
                             session.setAttribute("accountAPI", accountAPI);
                             ModelAndView view = new ModelAndView("user_profile");
                             view.addObject("accountAPI", accountAPI);
+                            view.addObject("buttonLabel", "Cập nhật");
                             view.addObject("message", "Cập nhật thành công!");
+                            view.addObject("formAction", "updateaccount");
                             return view;
                         }
                     }

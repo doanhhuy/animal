@@ -12,7 +12,7 @@
         <ul class="nav">
             <li>
                 <a href="<c:url value="/"/>">
-                    <i class="pe-7s-map-marker"></i>
+                    <i class="pe-7s-map"></i>
                     <p>Bản đồ</p>
                 </a>
             </li>
@@ -31,17 +31,45 @@
                     </a>
                 </li>
             </c:if>
-            <c:if test="${sessionScope.accountAPI.roleName == \"Member\"}">
+            <c:if test="${sessionScope.accountAPI.roleName == \"admin\"}">
                 <li>
                     <a href="<c:url value="/sharespecies"/>">
-                        <i class="pe-7s-user"></i>
+                        <i class="pe-7s-note"></i>
                         <p>Chia sẻ</p>
                     </a>
                 </li>
                 <li>
                     <a href="<c:url value="/species/list/share"/>">
-                        <i class="pe-7s-user"></i>
+                        <i class="pe-7s-albums"></i>
                         <p>Thông tin chia sẻ</p>
+                    </a>
+                </li>
+            </c:if>
+            <c:if test="${sessionScope.accountAPI.roleName == \"Expert\"}">
+                <li>
+                    <a href="<c:url value="/species/list/approve"/>">
+                        <i class="pe-7s-note"></i>
+                        <p>Phê duyệt loài</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="<c:url value="/species/list/share"/>">
+                        <i class="pe-7s-folder"></i>
+                        <p>Quản lý loài</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="<c:url value="/species/list/share"/>">
+                        <i class="pe-7s-folder"></i>
+                        <p>Quản lý loài đã thêm</p>
+                    </a>
+                </li>
+            </c:if>
+            <c:if test="${sessionScope.accountAPI.roleName == \"Admin\"}">
+                <li>
+                    <a href="<c:url value="/manageraccount"/>">
+                        <i class="pe-7s-folder"></i>
+                        <p>Quản lý tài khoản</p>
                     </a>
                 </li>
             </c:if>

@@ -7,6 +7,7 @@ import com.web.bean.FileInfo;
 import com.web.bean.Location;
 import com.web.common.ImageCommon;
 import com.web.entity.api.AccountAPI;
+import com.web.entity.api.GenusAPI;
 import com.web.entity.api.SpeciesAPI;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,6 +25,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,9 +56,6 @@ public class SpeciesController {
     private AuthTokenInfo tokenInfo;
 
     private String url = "api/species/all";
-
-    private List<SpeciesAPI> listShare;
-    private List<Location> locationList;
 
     @RequestMapping(value = "/libraryspecies", method = RequestMethod.GET)
     public ModelAndView showLibrarySpecies() {
@@ -470,219 +469,6 @@ public class SpeciesController {
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @RequestMapping(value = "species/list/share", method = RequestMethod.GET)
-    public ModelAndView informationShare(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
-        tokenInfo = (AuthTokenInfo) session.getAttribute("token");
-        AccountAPI accountAPI = (AccountAPI) session.getAttribute("accountAPI");
-        if (tokenInfo != null && accountAPI != null) {
-            ModelAndView view = new ModelAndView("information_share");
-            return view;
-        } else {
-            ModelAndView view = new ModelAndView("index");
-            String message = "Bạn chưa đăng nhập!";
-            view.addObject("error", message);
-            return view;
-        }
-    }
-
-    @RequestMapping(value = "species/list/share", method = RequestMethod.POST, produces = "text/html; charset=UTF-8")
-    public @ResponseBody
-    String showInformationShare(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
-        tokenInfo = (AuthTokenInfo) session.getAttribute("token");
-        AccountAPI accountAPI = (AccountAPI) session.getAttribute("accountAPI");
-        if (accountAPI == null || tokenInfo == null) {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                String result = null;
-                result = mapper.writeValueAsString("Bạn chưa đăng nhập!");
-                return result;
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        } else {
-            HttpClient httpClient = HttpClients.createDefault();
-            try {
-                URIBuilder builder = new URIBuilder(REST_SERVICE_URI + "/api/species/list/share");
-                builder.setParameter("id", String.valueOf(accountAPI.getId()));
-                builder.setParameter("access_token", tokenInfo.getAccess_token());
-                URI uri = builder.build();
-                HttpGet request = new HttpGet(uri);
-                HttpResponse response = httpClient.execute(request);
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    String json = EntityUtils.toString(entity);
-                    JSONParser parser = new JSONParser();
-                    JSONObject object = (JSONObject) parser.parse(json);
-                    if (object.containsKey("message")) {
-                        return null;
-                    } else if (object.containsKey("error")) {
-                        ObjectMapper mapper = new ObjectMapper();
-                        String result = mapper.writeValueAsString("Bạn chưa đăng nhập!");
-                        session.invalidate();
-                        return result;
-                    } else {
-                        JSONArray jsonArray = (JSONArray) object.get("specieses");
-                        JSONObject jsonObject;
-                        listShare = new ArrayList<>();
-                        locationList = new ArrayList<>();
-                        SpeciesAPI speciesAPI;
-                        Location location;
-                        for (int i = 0; i < jsonArray.size(); i++) {
-                            jsonObject = (JSONObject) jsonArray.get(i);
-                            speciesAPI = new SpeciesAPI();
-                            speciesAPI.setId((Long) jsonObject.get("id"));
-                            speciesAPI.setAlertlevel((String) jsonObject.get("alertlevel"));
-                            speciesAPI.setBiologicalBehavior((String) jsonObject.get("biologicalBehavior"));
-                            speciesAPI.setDateCreate((String) jsonObject.get("dateCreate"));
-                            speciesAPI.setDateUpdate((String) jsonObject.get("dateUpdate"));
-                            speciesAPI.setDiscovererName((String) jsonObject.get("discovererName"));
-                            speciesAPI.setFood((String) jsonObject.get("food"));
-                            speciesAPI.setIdChecker((Long) jsonObject.get("idChecker"));
-                            speciesAPI.setIdGenus((Long) jsonObject.get("idGenus"));
-                            speciesAPI.setImage((String) jsonObject.get("image"));
-                            speciesAPI.setIndividualQuantity((String) jsonObject.get("individualQuantity"));
-                            speciesAPI.setMediumSize((String) jsonObject.get("mediumSize"));
-                            speciesAPI.setNameChecker((String) jsonObject.get("nameChecker"));
-                            speciesAPI.setOrigin((String) jsonObject.get("origin"));
-                            speciesAPI.setOrtherTraits((String) jsonObject.get("ortherTraits"));
-                            speciesAPI.setOtherName((String) jsonObject.get("otherName"));
-                            speciesAPI.setReproductionTraits((String) jsonObject.get("reproductionTraits"));
-                            speciesAPI.setScienceName((String) jsonObject.get("scienceName"));
-                            speciesAPI.setVietnameseName((String) jsonObject.get("vietnameseName"));
-                            speciesAPI.setScienceNameGenus((String) jsonObject.get("scienceNameGenus"));
-                            speciesAPI.setVietnameseNameGenus((String) jsonObject.get("vietnameseNameGenus"));
-                            speciesAPI.setSexualTraits((String) jsonObject.get("sexualTraits"));
-                            speciesAPI.setVietnameseNameFamily((String) jsonObject.get("vietnameseNameFamily"));
-                            speciesAPI.setLocationName((String) jsonObject.get("locationName"));
-                            speciesAPI.setLatitude((Double) jsonObject.get("latitude"));
-                            speciesAPI.setLongitude((Double) jsonObject.get("longitude"));
-                            location = new Location();
-                            location.setLocationName(speciesAPI.getLocationName());
-                            location.setLatitude(speciesAPI.getLatitude());
-                            location.setLongitude(speciesAPI.getLongitude());
-                            locationList.add(location);
-                            listShare.add(speciesAPI);
-                        }
-                        ObjectMapper mapper = new ObjectMapper();
-                        String result = mapper.writeValueAsString(listShare);
-                        return result;
-                    }
-                }
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    @RequestMapping(value = "species/list/share/map", method = RequestMethod.GET)
-    public ModelAndView showShareMap(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
-        tokenInfo = (AuthTokenInfo) session.getAttribute("token");
-        AccountAPI accountAPI = (AccountAPI) session.getAttribute("accountAPI");
-        if (accountAPI == null || tokenInfo == null) {
-            ModelAndView view = new ModelAndView("index");
-            view.addObject("error", "Bạn chưa đăng nhập!");
-            return view;
-        } else {
-            ModelAndView view = new ModelAndView("map_share");
-            view.addObject("listShare", listShare);
-            return view;
-        }
-    }
-
-    @RequestMapping(value = "/sharespecies", method = RequestMethod.GET)
-    public ModelAndView shareSpecies() {
-        ModelAndView view = new ModelAndView("share_species");
-        return view;
-    }
-
-    @RequestMapping(value = "/sharespecies", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = "text/html; charset=UTF-8")
-    public @ResponseBody
-    String doShareSpecies(@RequestParam("file") MultipartFile image) {
-        try {
-            ImageCommon imageCommon = new ImageCommon();
-            FileInfo fileInfo = new FileInfo();
-            fileInfo.setFileName(image.getOriginalFilename());
-            fileInfo.setEncodeString(imageCommon.encodeImage(image.getBytes()));
-            HttpClient httpClient = HttpClients.createDefault();
-            URIBuilder builder = null;
-            builder = new URIBuilder(REST_SERVICE_URI + "api/upload");
-            URI uri = builder.build();
-            HttpPost request = new HttpPost(uri);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("fileName", fileInfo.getFileName());
-            jsonObject.put("encodeString", fileInfo.getEncodeString());
-            StringEntity stringEntity = new StringEntity(jsonObject.toString(), "application/json", "UTF-8");
-            request.setHeader("content-type", "application/json");
-            request.setEntity(stringEntity);
-            HttpResponse response = httpClient.execute(request);
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                String json = EntityUtils.toString(entity);
-                JSONParser parser = new JSONParser();
-                JSONObject object = (JSONObject) parser.parse(json);
-                if (object.size() > 0) {
-                    JSONArray jsonArray = (JSONArray) object.get("specieses");
-                    List<SpeciesAPI> speciesAPIS = new ArrayList<>();
-                    SpeciesAPI speciesAPI;
-                    for (int i = 0; i < jsonArray.size(); i++) {
-                        jsonObject = (JSONObject) jsonArray.get(i);
-                        speciesAPI = new SpeciesAPI();
-                        speciesAPI.setId((Long) jsonObject.get("id"));
-                        speciesAPI.setAlertlevel((String) jsonObject.get("alertlevel"));
-                        speciesAPI.setBiologicalBehavior((String) jsonObject.get("biologicalBehavior"));
-                        speciesAPI.setDateCreate((String) jsonObject.get("dateCreate"));
-                        speciesAPI.setDateUpdate((String) jsonObject.get("dateUpdate"));
-                        speciesAPI.setDiscovererName((String) jsonObject.get("discovererName"));
-                        speciesAPI.setFood((String) jsonObject.get("food"));
-                        speciesAPI.setIdChecker((Long) jsonObject.get("idChecker"));
-                        speciesAPI.setIdCreator((Long) jsonObject.get("idCreator"));
-                        speciesAPI.setIdGenus((Long) jsonObject.get("idGenus"));
-                        speciesAPI.setImage((String) jsonObject.get("image"));
-                        speciesAPI.setIndividualQuantity((String) jsonObject.get("individualQuantity"));
-                        speciesAPI.setMediumSize((String) jsonObject.get("mediumSize"));
-                        speciesAPI.setNameChecker((String) jsonObject.get("nameChecker"));
-                        speciesAPI.setNameCreator((String) jsonObject.get("nameCreator"));
-                        speciesAPI.setNotation((String) jsonObject.get("notation"));
-                        speciesAPI.setOrigin((String) jsonObject.get("origin"));
-                        speciesAPI.setOrtherTraits((String) jsonObject.get("ortherTraits"));
-                        speciesAPI.setOtherName((String) jsonObject.get("otherName"));
-                        speciesAPI.setReproductionTraits((String) jsonObject.get("reproductionTraits"));
-                        speciesAPI.setScienceName((String) jsonObject.get("scienceName"));
-                        speciesAPI.setVietnameseName((String) jsonObject.get("vietnameseName"));
-                        speciesAPI.setScienceNameGenus((String) jsonObject.get("scienceNameGenus"));
-                        speciesAPI.setVietnameseNameGenus((String) jsonObject.get("vietnameseNameGenus"));
-                        speciesAPI.setSexualTraits((String) jsonObject.get("sexualTraits"));
-                        speciesAPI.setStatus((long) jsonObject.get("status"));
-                        speciesAPI.setYearDiscover((String) jsonObject.get("yearDiscover"));
-                        speciesAPI.setVietnameseNameFamily((String) jsonObject.get("vietnameseNameFamily"));
-                        speciesAPIS.add(speciesAPI);
-                    }
-                    ObjectMapper mapper = new ObjectMapper();
-                    String result = mapper.writeValueAsString(speciesAPIS);
-                    return result;
-                }
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();

@@ -6,7 +6,7 @@ package com.web.entity.api;
  */
 public class HabitatAPI {
 
-    private int id;
+    private long id;
     private String locationName;
     private double latitude;
     private double longitude;
@@ -16,11 +16,11 @@ public class HabitatAPI {
     private String nameChecker;
 //    private Point geom;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

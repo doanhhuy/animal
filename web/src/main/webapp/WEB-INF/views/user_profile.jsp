@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="content">
                                     <c:if test="${accountAPI != null}">
-                                        <form:form action="/updateaccount" commandName="accountForm" method="post"
+                                        <form:form action="/${formAction}" commandName="accountForm" method="post"
                                                    acceptCharset="utf-8" data-toggle="validator">
                                             <input type="hidden" name="id" value="${accountAPI.id}">
                                             <input type="hidden" name="idMember" value="${accountAPI.idMember}">
@@ -162,7 +162,7 @@
                                         </form:form>
                                     </c:if>
                                     <c:if test="${accountAPI== null}">
-                                        <form:form action="/updateaccount" commandName="accountForm" method="post"
+                                        <form:form action="${formAction}" commandName="accountForm" method="post"
                                                    acceptCharset="utf-8" data-toggle="validator">
                                             <input type="hidden" name="id" value="">
                                             <input type="hidden" name="idMember" value="">
