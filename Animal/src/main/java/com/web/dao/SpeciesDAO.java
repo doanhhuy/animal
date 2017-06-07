@@ -70,7 +70,7 @@ public class SpeciesDAO implements ISpeciesDAO {
         p.setIdChecker(p.getIdChecker());
         p.setType(species.getType());
         p.setColor(species.getColor());
-        hibernateTemplate.merge(species);
+        hibernateTemplate.merge(p);
     }
 
     public boolean isSpeciesExistBySpecies(Species species) {
@@ -141,8 +141,7 @@ public class SpeciesDAO implements ISpeciesDAO {
     public boolean checkSpeciesByName(String scienceName, String vietnameseName, String otherName) {
         String hql;
         if (otherName != "") {
-            hql = "FROM Species WHERE status <> 0 AND ( scienceName = '" + scienceName + "' OR vietnameseName = '" +
-                    vietnameseName + "' OR otherName = '" + otherName + "' )";
+            hql = "FROM Species WHERE status <> 0 AND ( scienceName = '" + scienceName + "' OR vietnameseName = '" + vietnameseName + "' OR otherName = '" + otherName + "' )";
         } else {
             hql = "FROM Species WHERE status <> 0 AND ( scienceName = '" + scienceName + "' OR vietnameseName = '" + vietnameseName + "')";
         }
@@ -249,10 +248,7 @@ public class SpeciesDAO implements ISpeciesDAO {
     }
 
     public List<Species> getSpecieByKey(String key) {
-        String hql = "FROM Species as p WHERE p.status <> 0 AND (p.otherName like '%" + StringUtils.capitalize(key) +
-                "%' OR  p.vietnameseName" + " like " + "'%" + StringUtils.capitalize(key) + "%' OR p.scienceName like" +
-                " '%" + StringUtils.capitalize(key) + "%'" + " OR p.otherName like '%" + key + "%' OR  p" + "" +
-                ".vietnameseName" + " like " + "'%" + key + "%' OR p.scienceName like '%" + key + "%' )";
+        String hql = "FROM Species as p WHERE p.status <> 0 AND (p.otherName like '%" + StringUtils.capitalize(key) + "%' OR  p.vietnameseName" + " like " + "'%" + StringUtils.capitalize(key) + "%' OR p.scienceName like" + " '%" + StringUtils.capitalize(key) + "%'" + " OR p.otherName like '%" + key + "%' OR  p" + "" + ".vietnameseName" + " like " + "'%" + key + "%' OR p.scienceName like '%" + key + "%' )";
 //        hibernateTemplate.setMaxResults(200);
 
         hibernateTemplate.setMaxResults(0);
@@ -267,5 +263,46 @@ public class SpeciesDAO implements ISpeciesDAO {
 
     public Integer addSpeciesShare(Species species) {
         return (Integer) hibernateTemplate.save(species);
+    }
+
+    public List<Species> getListSpeciesApprove() {
+        String hql = "FROM Species WHERE status = 0 ORDER BY id";
+        hibernateTemplate.setMaxResults(0);
+        return (List<Species>) hibernateTemplate.find(hql);
+    }
+
+    public void approveSpecies(Species species) {
+        Species p = getSpeciesById(species.getId());
+        p.setStatus(1);
+        p.setIdChecker(species.getIdChecker());
+        p.setDateUpdate(species.getDateUpdate());
+        if (species.getMediumSize() != "") {
+            p.setMediumSize(species.getMediumSize());
+        }
+        if (species.getOrtherTraits() != "") {
+            p.setOrtherTraits(species.getOrtherTraits());
+        }
+        if (species.getIdGenus() != null) {
+            p.setIdGenus(species.getIdGenus());
+        }
+        if (species.getReproductionTraits() != "") {
+            p.setReproductionTraits(species.getReproductionTraits());
+        }
+        if (species.getSexualTraits() != "") {
+            p.setSexualTraits(species.getSexualTraits());
+        }
+        if (species.getVietnameseName() != "") {
+            p.setVietnameseName(species.getVietnameseName());
+        }
+        if (species.getScienceName() != "") {
+            p.setScienceName(species.getScienceName());
+        }
+        if (species.getBiologicalBehavior() != "") {
+            p.setBiologicalBehavior(species.getBiologicalBehavior());
+        }
+        if (species.getFood() != "") {
+            p.setFood(species.getFood());
+        }
+        hibernateTemplate.merge(p);
     }
 }

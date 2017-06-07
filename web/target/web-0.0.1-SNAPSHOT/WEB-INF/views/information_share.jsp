@@ -13,6 +13,28 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <%@include file="../jspf/header.jspf" %>
+<link href="<c:url value="/resources/plugins/leaflet/leaflet.css"/>" rel="stylesheet">
+<!-- Draw-->
+<link href="<c:url value="/resources/plugins/leaflet/leaflet.draw.css"/>" rel="stylesheet">
+
+<!-- Slide menu-->
+<link href="<c:url value="/resources/plugins/leaflet/slide_menu/SlideMenu.css"/>" rel="stylesheet">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<!-- GeoCoder-->
+<link href="<c:url value="/resources/plugins/leaflet/Control.OSMGeocoder.css"/>" rel="stylesheet">
+
+<!-- Overview-->
+<link href="<c:url value="/resources/plugins/leaflet/overview/MiniMap.css"/>" rel="stylesheet">
+
+<!-- Localisation-->
+<link href="<c:url value="/resources/plugins/leaflet/L.Control.Locate.min.css"/>" rel="stylesheet">
+
+<!-- Mouse position-->
+<link href="<c:url value="/resources/plugins/leaflet/L.Control.MousePosition.css"/>" rel="stylesheet">
+
+<!-- Navigation Bar-->
+<link href="<c:url value="/resources/plugins/leaflet/NavBar/NavBar.css"/>" rel="stylesheet">
 <link rel="stylesheet" href="<c:url value="/resources/css/information-share.css"/>">
 <body>
 <div class="wrapper">
@@ -54,7 +76,6 @@
                                     <h4 class="title">Chi tiết loài</h4>
                                 </div>
                                 <div class="content" id="detail-share" style="display:block;overflow-y:auto;">
-                                    <a href="<c:url value="/species/list/share/map"/>">Bản đồ</a>
                                     <div class="table-full-width">
                                         <table class="table">
                                             <tbody id="table-body">
@@ -70,16 +91,12 @@
         </div>
     </div>
 
-    <div id="modelMap" class="modal modal-wide fade" role="dialog">
+    <div id="myModal" class="modal modal-wide fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Maps</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-body" id="map-canvas"></div>
+                <div class="modal-body" align="center" id="modal-body">
+                    <div id="map"></div>
                 </div>
             </div>
         </div>
@@ -87,9 +104,57 @@
 </body>
 
 <%@include file="../jspf/footer.jspf" %>
+<!-- Bibliothèque de base: Leaflet-->
+<script src="<c:url value="/resources/plugins/leaflet/leaflet.js"/>" type="text/javascript"></script>
+<!-- Draw-->
+<script src="<c:url value="/resources/plugins/leaflet/leaflet.draw-src.js"/>" type="text/javascript"></script>
+<script src="<c:url value="/resources/plugins/leaflet/leaflet.draw.js"/>" type="text/javascript"></script>
 
-<script src="<c:url value="/resources/js/information-share.js"/>"></script>
+<!-- Slide menu-->
+<script src="<c:url value="/resources/plugins/leaflet/slide_menu/SlideMenu.js"/>" type="text/javascript"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
+<!-- GeoCoder-->
+<script src="<c:url value="/resources/plugins/leaflet/Control.OSMGeocoder.js"/>" type="text/javascript"></script>
+
+<!-- Overview-->
+<script src="<c:url value="/resources/plugins/leaflet/overview/MiniMap.js"/>" type="text/javascript"></script>
+
+<!-- Localisation-->
+<script src="<c:url value="/resources/plugins/leaflet/L.Control.Locate.js"/>" type="text/javascript"></script>
+
+<!-- Mouse position-->
+<script src="<c:url value="/resources/plugins/leaflet/L.Control.MousePosition.js"/>"
+        type="text/javascript"></script>
+
+<!-- Navigation Bar-->
+<script src="<c:url value="/resources/plugins/leaflet/NavBar/NavBar.js"/>" type="text/javascript"></script>
+
+<script src="<c:url value="/resources/js/information-share1.js"/>"></script>
+
+<script>
+    var marker = new Array();
+    var GoogleStreet = L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga');
+    var map = L.map('map', {
+        layers: [GoogleStreet],
+        center: new L.LatLng(16.048680, 108.216292),
+        crs: L.CRS.EPSG3857,
+        tms: true,
+        minZoom: 3,
+        maxZoom: 18,
+        zoom: 10
+    });
+    var redIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+</script>
+<div id="script"></div>
 <c:if test="${error != null}">
     <script>
         $(document).ready(function () {

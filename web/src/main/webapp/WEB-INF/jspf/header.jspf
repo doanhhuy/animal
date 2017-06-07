@@ -29,4 +29,7 @@
     <link href="<c:url value="/resources/css/w3.css"/>" rel="stylesheet"/>
     <link rel="stylesheet" href="<c:url value="/resources/css/formValidation.css"/>">
     <link rel="stylesheet" href="<c:url value="/resources/css/formValidation.min.css"/>">
+
+    <!-- datatable -->
+    <link rel="stylesheet" href="<c:url value="/resources/plugins/datatable/dataTables.bootstrap.min.css"/>">
 </head>

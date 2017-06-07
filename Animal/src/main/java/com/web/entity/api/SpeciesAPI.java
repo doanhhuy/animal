@@ -48,6 +48,8 @@ public class SpeciesAPI {
     private String nameChecker;
     private FileInfo imageFile;
     private String locationName;
+    private String fileName;
+    private String encodeString;
 
     public int getId() {
         return id;
@@ -335,5 +337,21 @@ public class SpeciesAPI {
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getEncodeString() {
+        return encodeString;
+    }
+
+    public void setEncodeString(String encodeString) {
+        this.encodeString = encodeString;
     }
 }

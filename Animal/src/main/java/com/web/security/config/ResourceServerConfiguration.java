@@ -34,7 +34,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .requestMatchers().antMatchers("/api/accounts/changerole/**")
                 .requestMatchers().antMatchers("/api/species/list/share")
                 .requestMatchers().antMatchers("/api/species/share")
-                .requestMatchers().antMatchers("/api/lockaccount/")
+                .requestMatchers().antMatchers("/api/species/approve")
+                .requestMatchers().antMatchers("/api/species/list/approve")
                 .and().authorizeRequests()
                 .antMatchers("/api/accounts/**")
                 .access("hasRole('Admin') OR hasRole('Member') OR hasRole('Expert')")
@@ -47,11 +48,15 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/api/accounts/changerole/**")
                 .access("hasRole('Admin') OR hasRole('Member') OR hasRole('Expert')")
                 .antMatchers("/api/species/list/share")
-                .access("hasRole('Admin') OR hasRole('Member') OR hasRole('Expert')")
+                .access("hasRole('Member')")
                 .antMatchers("/api/species/share")
-                .access("hasRole('Admin') OR hasRole('Member') OR hasRole('Expert')")
+                .access("hasRole('Member')")
                 .antMatchers("/api/lockaccount/")
                 .access("hasRole('Admin') OR hasRole('Expert')")
+                .antMatchers("/api/species/approve")
+                .access("hasRole('Expert')")
+                .antMatchers("/api/species/list/approve")
+                .access("hasRole('Expert')")
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
 

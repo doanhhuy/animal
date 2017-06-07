@@ -491,7 +491,7 @@ public class SpeciesController {
             species.setFood(speciesAPI.getFood());
             species.setHabitatByIdSpecies(habitats);
             species.setNotation(speciesAPI.getNotation());
-            species.setStatus(0);
+            species.setStatus(1);
             species.setVietnameseName(speciesAPI.getVietnameseName());
             species.setScienceName(speciesAPI.getScienceName());
             species.setOtherName(species.getOtherName());
@@ -506,7 +506,9 @@ public class SpeciesController {
             species.setYearDiscover(speciesAPI.getYearDiscover());
             species.setDateCreate(dateCommon.getDateNow());
             species.setDateUpdate(dateCommon.getTimestampNow());
-            FileInfo fileInfo = speciesAPI.getImageFile();
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setFileName(speciesAPI.getFileName());
+            fileInfo.setEncodeString(speciesAPI.getEncodeString());
             if (fileInfo != null) {
                 try {
                     ImageCommon imageCommon = new ImageCommon();
@@ -623,7 +625,9 @@ public class SpeciesController {
             species.setYearDiscover(speciesAPI.getYearDiscover());
             species.setDateCreate(speciesAPI.getDateCreate());
             species.setDateUpdate(dateCommon.getTimestampNow());
-            FileInfo fileInfo = speciesAPI.getImageFile();
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setFileName(speciesAPI.getFileName());
+            fileInfo.setEncodeString(speciesAPI.getEncodeString());
             if (fileInfo != null) {
                 try {
                     ImageCommon imageCommon = new ImageCommon();
@@ -1114,7 +1118,9 @@ public class SpeciesController {
 
         if (habitat == null) {
             habitat = new Habitat();
-            habitat.setLocationName(speciesShareAPI.getLocationName());
+            if (speciesShareAPI.getLocationName() != null || speciesShareAPI.getLocationName() != "") {
+                habitat.setLocationName(speciesShareAPI.getLocationName());
+            }
             habitat.setLongitude(speciesShareAPI.getLongitude());
             habitat.setLatitude(speciesShareAPI.getLatitude());
             habitat.setIdChecker(accountService.getAccountById(id));
@@ -1195,12 +1201,112 @@ public class SpeciesController {
         Integer result = speciesService.addSpeciesShare(species);
         species = speciesService.getSpeciesById(result);
         if (species != null) {
-            return new ResponseEntity<ResultRespone>(new ResultRespone("Chia sẻ thành công! Vui lòng chờ phê duyệt " +
-                    "từ chuyên gia qua email của bạn"),
-                    HttpStatus
-                    .OK);
+            return new ResponseEntity<ResultRespone>(new ResultRespone("Chia sẻ thành công! Vui lòng chờ phê duyệt " + "từ chuyên gia!"), HttpStatus.OK);
         } else {
             return new ResponseEntity<ResultRespone>(new ResultRespone("Thêm thất bại!"), HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "/api/species/list/approve", method = RequestMethod.GET)
+    private ResponseEntity<SpeciesJSON> getListSpeciesApprove() {
+        List<Species> speciesList = speciesService.getListSpeciesApprove();
+
+        if (speciesList.size() == 0) {
+            return new ResponseEntity<SpeciesJSON>(HttpStatus.NO_CONTENT);
+        } else {
+            SpeciesAPI speciesAPI;
+            Members members;
+            List<Habitat> habitats = new ArrayList<Habitat>();
+            List<SpeciesAPI> speciesAPIS = new ArrayList<SpeciesAPI>();
+            for (Species s : speciesList) {
+                speciesAPI = new SpeciesAPI();
+                speciesAPI.setId(s.getId());
+                speciesAPI.setAlertlevel(s.getAlertlevel());
+                speciesAPI.setBiologicalBehavior(s.getBiologicalBehavior());
+                speciesAPI.setDateCreate(s.getDateCreate());
+                speciesAPI.setDateUpdate(s.getDateUpdate().toString());
+                speciesAPI.setDiscovererName(s.getDiscovererName());
+                speciesAPI.setFood(s.getFood());
+                speciesAPI.setIdCreator(s.getIdCreator().getId());
+                if (s.getIdGenus() != null) {
+                    speciesAPI.setIdGenus(s.getIdGenus().getId());
+                    speciesAPI.setScienceNameGenus(s.getIdGenus().getScienceName());
+                    speciesAPI.setVietnameseNameGenus(s.getIdGenus().getVietnameseName());
+                }
+                speciesAPI.setImage(s.getImage());
+                speciesAPI.setIndividualQuantity(s.getIndividualQuantity());
+                speciesAPI.setMediumSize(s.getMediumSize());
+                members = memberService.getMemberById(s.getIdCreator().getId());
+                speciesAPI.setNameCreator(members.getFullName());
+                speciesAPI.setNotation(s.getNotation());
+                speciesAPI.setOrigin(s.getOrigin());
+                speciesAPI.setOrtherTraits(s.getOrtherTraits());
+                speciesAPI.setOtherName(s.getOtherName());
+                speciesAPI.setReproductionTraits(s.getReproductionTraits());
+                speciesAPI.setScienceName(s.getScienceName());
+                speciesAPI.setVietnameseName(s.getVietnameseName());
+                speciesAPI.setSexualTraits(s.getSexualTraits());
+                speciesAPI.setStatus(s.getStatus());
+                speciesAPI.setYearDiscover(s.getYearDiscover());
+                habitats.addAll(s.getHabitatByIdSpecies());
+                speciesAPI.setLatitude(habitats.get(0).getLatitude());
+                speciesAPI.setLongitude(habitats.get(0).getLongitude());
+                speciesAPIS.add(speciesAPI);
+            }
+            SpeciesJSON speciesJSON = new SpeciesJSON();
+            speciesJSON.setSpecieses(speciesAPIS);
+            return new ResponseEntity<SpeciesJSON>(speciesJSON, HttpStatus.OK);
+        }
+
+    }
+
+    @RequestMapping(value = "/api/species/approve/{idSpecies}", method = RequestMethod.PUT)
+    private ResponseEntity<ResultRespone> approveSpecies(@PathVariable("idSpecies") int idSpecies, @RequestParam("idChecker")
+            int idChecker, @RequestBody SpeciesShareAPI speciesShareAPI) {
+        DateCommon dateCommon = new DateCommon();
+        if (speciesShareAPI.getScienceName() != "" || speciesShareAPI.getVietnameseName() != "") {
+            if (speciesService.checkSpeciesByName(speciesShareAPI.getScienceName(), speciesShareAPI.getVietnameseName(), "")) {
+                return new ResponseEntity<com.web.bean.ResultRespone>(new com.web.bean.ResultRespone("Tên khoa học hoặc tên tiếng việt đã tồn " + "tại!"), HttpStatus.OK);
+            }
+        }
+        Account account = accountService.getAccountById(idChecker);
+        Species species = new Species();
+        species.setId(idSpecies);
+        species.setIdChecker(account);
+        species.setDateUpdate(dateCommon.getTimestampNow());
+        if (speciesShareAPI.getMediumSize() != "") {
+            species.setMediumSize(speciesShareAPI.getMediumSize());
+        }
+        if (speciesShareAPI.getOrtherTraits() != "") {
+            species.setOrtherTraits(speciesShareAPI.getOrtherTraits());
+        }
+        if (speciesShareAPI.getIdGenus() != 0) {
+            species.setIdGenus(genusService.getGenusById(speciesShareAPI.getIdGenus()));
+        }
+        if (speciesShareAPI.getReproductionTraits() != "") {
+            species.setReproductionTraits(speciesShareAPI.getReproductionTraits());
+        }
+        if (speciesShareAPI.getSexualTraits() != "") {
+            species.setSexualTraits(speciesShareAPI.getSexualTraits());
+        }
+        if (speciesShareAPI.getVietnameseName() != "") {
+            species.setVietnameseName(speciesShareAPI.getVietnameseName());
+        }
+        if (speciesShareAPI.getScienceName() != "") {
+            species.setScienceName(speciesShareAPI.getScienceName());
+        }
+        if (speciesShareAPI.getBiologicalBehavior() != "") {
+            species.setBiologicalBehavior(speciesShareAPI.getBiologicalBehavior());
+        }
+        if (speciesShareAPI.getFood() != "") {
+            species.setFood(speciesShareAPI.getFood());
+        }
+        speciesService.approveSpecies(species);
+        species = speciesService.getSpeciesById(idSpecies);
+        if (species.getStatus() == 1) {
+            return new ResponseEntity<com.web.bean.ResultRespone>(new com.web.bean.ResultRespone("Phê duyệt thành " + "công!"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<com.web.bean.ResultRespone>(new com.web.bean.ResultRespone("Phê duyệt thất " + "bại!"), HttpStatus.OK);
         }
     }
 

@@ -100,7 +100,8 @@
     </script>
 </c:if>
 <%@include file="../jspf/footer.jspf" %>
-<script src="<c:url value="/resources/js/library_species1.js"/>"></script>
+<script src="<c:url value="/resources/js/library_species.js"/>"></script>
+
 </html>
 
 

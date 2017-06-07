@@ -53,9 +53,9 @@ public class DBConfig {
         {
             BasicDataSource driver = new BasicDataSource();
             driver.setDriverClassName("org.postgresql.Driver");
-            driver.setUrl("jdbc:postgresql://localhost:5432/animal");
+            driver.setUrl("jdbc:postgresql://localhost:5433/animal");
             driver.setUsername("postgres");
-            driver.setPassword("ngocduy");
+            driver.setPassword("123");
             driver.setInitialSize(10);
             driver.setMaxTotal(50);
             driver.setMaxIdle(50);

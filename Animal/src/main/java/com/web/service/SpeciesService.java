@@ -104,7 +104,15 @@ public class SpeciesService implements ISpeciesService {
         return speciesDAO.getListSpeciesShare(id);
     }
 
+    public List<Species> getListSpeciesApprove() {
+        return speciesDAO.getListSpeciesApprove();
+    }
+
     public Integer addSpeciesShare(Species species) {
         return speciesDAO.addSpeciesShare(species);
+    }
+
+    public void approveSpecies(Species species) {
+        speciesDAO.approveSpecies(species);
     }
 }

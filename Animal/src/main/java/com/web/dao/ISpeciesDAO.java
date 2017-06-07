@@ -55,4 +55,8 @@ public interface ISpeciesDAO {
     List<Species> getListSpeciesShare(int id);
 
     Integer addSpeciesShare(Species species);
+
+    List<Species> getListSpeciesApprove();
+
+    void approveSpecies(Species species);
 }

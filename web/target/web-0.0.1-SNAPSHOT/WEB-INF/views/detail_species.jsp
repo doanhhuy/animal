@@ -10,6 +10,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <html>
 <%@include file="../jspf/header.jspf" %>
+<link href="<c:url value="/resources/plugins/leaflet/leaflet.css"/>" rel="stylesheet">
+<!-- Draw-->
+<link href="<c:url value="/resources/plugins/leaflet/leaflet.draw.css"/>" rel="stylesheet">
+
+<!-- Slide menu-->
+<link href="<c:url value="/resources/plugins/leaflet/slide_menu/SlideMenu.css"/>" rel="stylesheet">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<!-- GeoCoder-->
+<link href="<c:url value="/resources/plugins/leaflet/Control.OSMGeocoder.css"/>" rel="stylesheet">
+
+<!-- Overview-->
+<link href="<c:url value="/resources/plugins/leaflet/overview/MiniMap.css"/>" rel="stylesheet">
+
+<!-- Localisation-->
+<link href="<c:url value="/resources/plugins/leaflet/L.Control.Locate.min.css"/>" rel="stylesheet">
+
+<!-- Mouse position-->
+<link href="<c:url value="/resources/plugins/leaflet/L.Control.MousePosition.css"/>" rel="stylesheet">
+
+<!-- Navigation Bar-->
+<link href="<c:url value="/resources/plugins/leaflet/NavBar/NavBar.css"/>" rel="stylesheet">
 <link href="<c:url value="/resources/css/detail_species.css"/>" rel="stylesheet"/>
 </head>
 <body>
@@ -91,7 +113,7 @@
                                                 <div id="myCarousel" class="carousel slide"
                                                      data-ride="carousel">
                                                     <!-- Wrapper for slides -->
-                                                    <div class="carousel-inner" role="listbox">
+                                                    <div class="carousel-inner">
                                                         <c:if test="${species.image == null}">
                                                             <div class="item active">
                                                                 <img
@@ -149,6 +171,7 @@
                                                     <td class="td-content">
                                                         <h4 class="h4-title"><c:out
                                                                 value="${species.vietnameseName}"/></h4>
+                                                        <input type="hidden" id="id-species" value="${species.id}">
                                                         <p class="p-category"><strong>Tên khoa
                                                             học:</strong> ${species.scienceName}</p>
                                                         <p class="p-category"><strong>Tên thường
@@ -169,6 +192,13 @@
                                                     <td class="td-content">
                                                         <p class="p-title">Phát hiển bởi </p>
                                                         <p class="p-category">${species.discovererName}</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="td-content">
+                                                        <p class="p-title">Nơi cư trú </p>
+                                                        <a id="showHabitat" href="#"><i class="fa fa-map fa-2x"
+                                                                                        aria-hidden="true"></i></a>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -209,4 +239,67 @@
 </div>
 </body>
 <%@include file="../jspf/footer.jspf" %>
+<!-- Bibliothèque de base: Leaflet-->
+<script src="<c:url value="/resources/plugins/leaflet/leaflet.js"/>" type="text/javascript"></script>
+<!-- Draw-->
+<script src="<c:url value="/resources/plugins/leaflet/leaflet.draw-src.js"/>" type="text/javascript"></script>
+<script src="<c:url value="/resources/plugins/leaflet/leaflet.draw.js"/>" type="text/javascript"></script>
+
+<!-- Slide menu-->
+<script src="<c:url value="/resources/plugins/leaflet/slide_menu/SlideMenu.js"/>" type="text/javascript"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<!-- GeoCoder-->
+<script src="<c:url value="/resources/plugins/leaflet/Control.OSMGeocoder.js"/>" type="text/javascript"></script>
+
+<!-- Overview-->
+<script src="<c:url value="/resources/plugins/leaflet/overview/MiniMap.js"/>" type="text/javascript"></script>
+
+<!-- Localisation-->
+<script src="<c:url value="/resources/plugins/leaflet/L.Control.Locate.js"/>" type="text/javascript"></script>
+
+<!-- Mouse position-->
+<script src="<c:url value="/resources/plugins/leaflet/L.Control.MousePosition.js"/>"
+        type="text/javascript"></script>
+
+<!-- Navigation Bar-->
+<script src="<c:url value="/resources/plugins/leaflet/NavBar/NavBar.js"/>" type="text/javascript"></script>
+<script src="<c:url value="/resources/js/detail_species.js"/>"></script>
+
+<div id="myModal" class="modal modal-wide fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body" align="center" id="modal-body">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var marker = new Array();
+    var GoogleStreet = L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga');
+    var map = L.map('map', {
+        layers: [GoogleStreet],
+        center: new L.LatLng(16.048680, 108.216292),
+        crs: L.CRS.EPSG3857,
+        tms: true,
+        minZoom: 3,
+        maxZoom: 18,
+        zoom: 10
+    });
+    var redIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+    $('#myModal').on('shown.bs.modal', function () {
+        map.invalidateSize();
+    });
+</script>
+<div id="script"></div>
+</body>
 </html>
